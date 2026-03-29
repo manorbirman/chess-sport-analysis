@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chess Sport — Platform Solutions Analysis</title>
+<meta name="description" content="Comprehensive analysis of architectural approaches for onboarding Chess to the WSC Sports platform — business signals, data feeds, sport fundamentals, and phased recommendation.">
+<meta property="og:title" content="Chess Sport — Platform Solutions Analysis">
+<meta property="og:description" content="New Sport vs Manual MVP — a pragmatic framework for launching Chess on WSC Sports.">
+<meta property="og:type" content="article">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--blue:#2563eb;--green:#16a34a;--red:#dc2626;--orange:#ea580c;--gray:#64748b;--purple:#7c3aed;--chess:#1a1a2e;--bg:#f8fafc;--card:#fff;--border:#e2e8f0;--sidebar-w:270px;--text:#1e293b;--hero-h:420px}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:24px}
+body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.65;-webkit-font-smoothing:antialiased}
+
+/* SIDEBAR */
+.sidebar{position:fixed;top:0;left:0;width:var(--sidebar-w);height:100vh;background:linear-gradient(180deg,#0f172a 0%,#1e293b 100%);color:#cbd5e1;overflow-y:auto;padding:0;z-index:100;display:flex;flex-direction:column;border-right:1px solid #334155;transition:transform .3s ease}
+.sidebar::-webkit-scrollbar{width:4px}
+.sidebar::-webkit-scrollbar-thumb{background:#475569;border-radius:4px}
+.sidebar-header{padding:1.5rem 1.5rem 1.25rem;border-bottom:1px solid #334155}
+.sidebar-header h1{font-size:1rem;color:#fff;line-height:1.4;font-weight:700;letter-spacing:-0.01em}
+.sidebar-header p{font-size:.72rem;color:#64748b;margin-top:.35rem;font-weight:500}
+.sidebar nav{flex:1;padding:.5rem 0}
+.nav-section{padding:.25rem 0}
+.nav-section-title{font-size:.6rem;text-transform:uppercase;letter-spacing:.12em;color:#475569;padding:.65rem 1.5rem .3rem;font-weight:700}
+.nav-item{display:block;padding:.5rem 1.5rem;font-size:.8rem;color:#94a3b8;text-decoration:none;cursor:pointer;border-left:3px solid transparent;transition:all .15s ease;font-weight:500}
+.nav-item:hover{background:rgba(51,65,85,.5);color:#e2e8f0}
+.nav-item.active{background:rgba(37,99,235,.15);color:#93c5fd;border-left-color:var(--blue);font-weight:600}
+.nav-icon{margin-right:.45rem;font-size:.85rem}
+
+/* HAMBURGER (mobile) */
+.hamburger{display:none;position:fixed;top:16px;left:16px;z-index:200;width:42px;height:42px;border-radius:10px;background:#1e293b;border:1px solid #334155;cursor:pointer;align-items:center;justify-content:center;flex-direction:column;gap:4px;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+.hamburger span{display:block;width:18px;height:2px;background:#94a3b8;border-radius:2px;transition:all .2s}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:90}
+
+/* MAIN */
+.main{margin-left:var(--sidebar-w);min-height:100vh}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#0f172a 0%,#1a1a2e 50%,#1e293b 100%);color:#fff;padding:4rem 3rem 3.5rem;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-50%;right:-20%;width:600px;height:600px;background:radial-gradient(circle,rgba(124,58,237,.15) 0%,transparent 70%);pointer-events:none}
+.hero::after{content:'';position:absolute;bottom:-30%;left:-10%;width:400px;height:400px;background:radial-gradient(circle,rgba(37,99,235,.1) 0%,transparent 70%);pointer-events:none}
+.hero-content{position:relative;max-width:780px}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(124,58,237,.2);border:1px solid rgba(124,58,237,.3);color:#c4b5fd;padding:5px 14px;border-radius:999px;font-size:.72rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;margin-bottom:1.25rem}
+.hero h1{font-size:2.5rem;font-weight:800;line-height:1.15;letter-spacing:-.03em;margin-bottom:.75rem}
+.hero h1 span{background:linear-gradient(135deg,#c4b5fd,#818cf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:1.05rem;color:#94a3b8;line-height:1.6;max-width:600px;margin-bottom:2rem}
+.hero-stats{display:flex;gap:2rem;flex-wrap:wrap}
+.hero-stat{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:1rem 1.5rem;min-width:140px}
+.hero-stat-value{font-size:1.6rem;font-weight:800;color:#fff;letter-spacing:-.02em}
+.hero-stat-label{font-size:.7rem;color:#64748b;text-transform:uppercase;letter-spacing:.08em;margin-top:.15rem;font-weight:600}
+
+/* SECTIONS */
+section{padding:3rem 3rem 2rem;max-width:920px}
+section:last-of-type{padding-bottom:4rem}
+.section-header{margin-bottom:1.75rem;padding-bottom:1rem;border-bottom:2px solid var(--border)}
+.section-header h2{font-size:1.55rem;font-weight:700;letter-spacing:-.02em;margin-bottom:.25rem}
+.section-header p{color:var(--gray);font-size:.88rem}
+.section-tldr{padding:10px 14px;border-radius:8px;font-size:.83rem;margin-bottom:10px;font-weight:600;line-height:1.5}
+.tldr-blue{background:#eff6ff;color:#1e40af}
+.tldr-red{background:#fef2f2;color:#991b1b}
+.tldr-green{background:#dcfce7;color:#166534}
+.tldr-purple{background:#f5f3ff;color:#5b21b6}
+.tldr-gray{background:#f1f5f9;color:#475569}
+.tldr-orange{background:#fff7ed;color:#9a3412}
+
+/* CARDS */
+h3{font-size:1.1rem;margin:1.25rem 0 .75rem;font-weight:700}
+h4{font-size:.85rem;margin:1rem 0 .5rem;color:var(--gray);text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin-bottom:1.25rem;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.card.sol-a{border-left:4px solid var(--blue)}
+.card.sol-b{border-left:4px solid var(--green)}
+.card.context{border-left:4px solid var(--orange)}
+.card.chess{border-left:4px solid var(--purple)}
+
+/* BADGES */
+.badge{display:inline-block;padding:2px 10px;border-radius:999px;font-size:.72rem;font-weight:600;margin-right:.4rem}
+.badge-blue{background:#dbeafe;color:#1d4ed8}
+.badge-green{background:#dcfce7;color:#166534}
+.badge-red{background:#fee2e2;color:#991b1b}
+.badge-orange{background:#ffedd5;color:#9a3412}
+.badge-gray{background:#f1f5f9;color:#475569}
+.badge-purple{background:#f5f3ff;color:#5b21b6}
+
+/* TABLES */
+table{width:100%;border-collapse:collapse;margin:.75rem 0;font-size:.86rem}
+th,td{padding:.6rem .75rem;text-align:left;border-bottom:1px solid var(--border)}
+th{background:#f1f5f9;font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.04em;color:#475569}
+.pro{color:var(--green)}.con{color:var(--red)}
+ul,ol{padding-left:1.5rem;margin:.5rem 0}
+li{margin:.3rem 0;font-size:.9rem}
+
+/* LAYOUT */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+.highlight{background:#fef9c3;padding:1rem 1.25rem;border-radius:8px;border:1px solid #fde047;margin:1rem 0;font-size:.88rem;line-height:1.6}
+.highlight-red{background:#fef2f2;padding:1rem 1.25rem;border-radius:8px;border:1px solid #fca5a5;margin:1rem 0;font-size:.88rem;line-height:1.6}
+.verdict{background:linear-gradient(135deg,#f5f3ff,#ede9fe);padding:1.5rem;border-radius:12px;border:1px solid #c4b5fd}
+a{color:var(--blue);font-weight:500}
+code{background:#f1f5f9;padding:2px 6px;border-radius:4px;font-size:.84em;font-family:'SF Mono',Monaco,monospace}
+.money{background:linear-gradient(90deg,#fef9c3,#fef08a);padding:2px 8px;border-radius:4px;font-weight:700;color:#854d0e;white-space:nowrap;font-size:.85rem}
+.money-row td{background:#fffbeb}
+
+/* CHESS BOARD VISUAL */
+.chess-board-mini{display:inline-grid;grid-template-columns:repeat(8,22px);gap:0;border:2px solid #475569;border-radius:4px;overflow:hidden;vertical-align:middle;margin-right:.5rem}
+.sq-l{width:22px;height:22px;background:#f0d9b5}
+.sq-d{width:22px;height:22px;background:#b58863}
+
+/* SECTION DIVIDER */
+.section-divider{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:0 3rem}
+
+/* FOOTER */
+.site-footer{background:#0f172a;color:#64748b;padding:3rem;margin-left:var(--sidebar-w);text-align:center;font-size:.78rem;line-height:1.7;border-top:1px solid #1e293b}
+.site-footer a{color:#60a5fa}
+
+/* CODE BLOCK */
+.code-block{background:#1e293b;color:#e2e8f0;padding:1rem;border-radius:8px;font-family:'SF Mono',Monaco,monospace;font-size:.8rem;overflow-x:auto;margin:.75rem 0;line-height:1.5}
+
+/* SCROLL TO TOP */
+.scroll-top{position:fixed;bottom:24px;right:24px;width:42px;height:42px;border-radius:50%;background:var(--purple);color:#fff;border:none;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(124,58,237,.3);opacity:0;transform:translateY(10px);transition:all .3s ease;z-index:50}
+.scroll-top.visible{opacity:1;transform:translateY(0)}
+.scroll-top:hover{background:#6d28d9;transform:translateY(-2px);box-shadow:0 6px 16px rgba(124,58,237,.4)}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .sidebar-overlay.open{display:block}
+  .hamburger{display:flex}
+  .main{margin-left:0}
+  .hero{padding:5rem 1.5rem 2.5rem}
+  .hero h1{font-size:1.8rem}
+  .hero-stats{gap:1rem}
+  .hero-stat{min-width:120px;padding:.75rem 1rem}
+  .hero-stat-value{font-size:1.3rem}
+  section{padding:2rem 1.5rem}
+  .grid-2{grid-template-columns:1fr}
+  .site-footer{margin-left:0}
+  table{font-size:.78rem}
+  th,td{padding:.45rem .5rem}
+  .section-divider{margin:0 1.5rem}
+}
+@media print{
+  .sidebar,.hamburger,.scroll-top{display:none!important}
+  .main,.site-footer{margin-left:0}
+  .hero{background:#1e293b!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  section{page-break-inside:avoid}
+}
+</style>
+</head>
+<body>
+
+<!-- HAMBURGER -->
+<button class="hamburger" id="menuBtn" aria-label="Toggle navigation">
+  <span></span><span></span><span></span>
+</button>
+<div class="sidebar-overlay" id="overlay"></div>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <h1>&#9822; Chess Sport Analysis</h1>
+    <p>Platform Architecture &middot; March 2026</p>
+  </div>
+  <nav>
+    <div class="nav-section">
+      <div class="nav-section-title">Context</div>
+      <a class="nav-item active" href="#context"><span class="nav-icon">&#128202;</span> Business Signals</a>
+      <a class="nav-item" href="#jira"><span class="nav-icon">&#127915;</span> Jira Landscape</a>
+      <a class="nav-item" href="#providers"><span class="nav-icon">&#128225;</span> Data Providers</a>
+      <a class="nav-item" href="#data-samples"><span class="nav-icon">&#128300;</span> PGN &amp; Data Feed</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Chess Deep-Dive</div>
+      <a class="nav-item" href="#fundamentals"><span class="nav-icon">&#9820;</span> Sport Fundamentals</a>
+      <a class="nav-item" href="#actions"><span class="nav-icon">&#127919;</span> Key Moments &amp; Highlights</a>
+      <a class="nav-item" href="#broadcast"><span class="nav-icon">&#127916;</span> Broadcast Use Cases</a>
+      <a class="nav-item" href="#why-unique"><span class="nav-icon" style="color:#ef4444">&#9888;</span> Why Chess is Unique</a>
+      <a class="nav-item" href="#roadmap"><span class="nav-icon">&#128506;&#65039;</span> Dev Roadmap</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Solutions</div>
+      <a class="nav-item" href="#sol-a"><span class="nav-icon" style="color:#60a5fa">A</span> New Sport</a>
+      <a class="nav-item" href="#sol-a-proscons"><span class="nav-icon" style="color:#60a5fa">&plusmn;</span> A: Pros &amp; Cons</a>
+      <a class="nav-item" href="#sol-b"><span class="nav-icon" style="color:#4ade80">B</span> Manual MVP</a>
+      <a class="nav-item" href="#sol-b-proscons"><span class="nav-icon" style="color:#4ade80">&plusmn;</span> B: Pros &amp; Cons</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Decision</div>
+      <a class="nav-item" href="#historical"><span class="nav-icon">&#128200;</span> Historical Evidence</a>
+      <a class="nav-item" href="#comparison"><span class="nav-icon">&#9878;&#65039;</span> Comparison Table</a>
+      <a class="nav-item" href="#recommendation"><span class="nav-icon">&#127919;</span> Recommendation</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Appendix</div>
+      <a class="nav-item" href="#references"><span class="nav-icon">&#128206;</span> All Sources</a>
+    </div>
+  </nav>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-content">
+    <div class="hero-badge">&#9822; Platform Architecture Analysis</div>
+    <h1>Chess on WSC Sports — <span>New Sport</span> or <span>Manual First</span>?</h1>
+    <p class="hero-sub">A pragmatic analysis of how to bring Chess — the world's most digitally active mind sport with 100M+ online players — onto the WSC Sports platform. The content challenge is unique: highlights aren't scored goals; they're brilliant moves.</p>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-value">100M+</div>
+        <div class="hero-stat-label">Chess.com Users</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-value">8wk</div>
+        <div class="hero-stat-label">Internal Dev Est.</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-value">0</div>
+        <div class="hero-stat-label">Signed Clients</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-value">A&rarr;C</div>
+        <div class="hero-stat-label">Recommended Path</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════ BUSINESS SIGNALS ════════════════ -->
+<section id="context">
+  <div class="section-header">
+    <div class="section-tldr tldr-blue">TL;DR &mdash; No signed chess clients. Growing broadcast demand driven by Chess.com, FIDE events, and post-Queen's Gambit cultural surge. Chess.com is the dominant platform and a logical anchor client.</div>
+    <h2>&#128202; Business Signals</h2>
+    <p>Market opportunity, potential client pipeline, and competitive landscape</p>
+  </div>
+
+  <div class="card context">
+    <h3>Market Opportunity</h3>
+    <table>
+      <tr><th>Signal</th><th>Detail</th></tr>
+      <tr><td><strong>Chess.com</strong></td><td>100M+ registered users. Largest chess platform. Produces its own video broadcasts for tournaments (Candidates, Speed Chess Championship, Global Championship). Natural anchor client.</td></tr>
+      <tr><td><strong>FIDE World Championship</strong></td><td>2023 Ding vs. Nepomniachtchi drew 100K+ peak concurrent viewers on Chess.com streams. Broadcast demand is real.</td></tr>
+      <tr><td><strong>Speed Chess (Blitz/Bullet)</strong></td><td>High-action short-format chess (5 min, 3 min, 1 min) is most broadcast-friendly. Content pipeline: daily tournaments, consistent schedule.</td></tr>
+      <tr><td><strong>Queen's Gambit Effect</strong></td><td>2020 Netflix series drove 1M+ new Chess.com signups in 24 hours. Chess has a proven crossover audience.</td></tr>
+      <tr><td><strong>Broadcast infrastructure</strong></td><td>Chess.com broadcasts with multiple camera angles (player face cams, board cam, studio desk). Video asset exists — content packaging is the gap.</td></tr>
+    </table>
+  </div>
+
+  <div class="card context">
+    <h3>Potential Client Pipeline (Indicative)</h3>
+    <p style="font-size:.85rem;color:var(--gray);margin-bottom:.75rem">No confirmed Salesforce data at time of writing. These represent logical client targets based on market activity.</p>
+    <table>
+      <tr><th>Potential Client</th><th>Type</th><th>Why WSC</th><th>Status</th></tr>
+      <tr><td><strong>Chess.com</strong></td><td>Platform</td><td>Produces broadcast content, needs automated highlight packages for social/app</td><td><span class="badge badge-gray">Unconfirmed</span></td></tr>
+      <tr><td><strong>FIDE</strong></td><td>Federation</td><td>World Championship and Grand Prix events need broadcast-ready content</td><td><span class="badge badge-gray">Unconfirmed</span></td></tr>
+      <tr><td><strong>Chessable / chess24</strong></td><td>Media/Ed</td><td>Content-heavy audiences seeking tournament recaps</td><td><span class="badge badge-gray">Unconfirmed</span></td></tr>
+      <tr><td><strong>National Federations</strong></td><td>Federation</td><td>US Chess, ECF, ChessFed India — growing social media needs</td><td><span class="badge badge-gray">Unconfirmed</span></td></tr>
+    </table>
+  </div>
+
+  <div class="card context">
+    <h3>Competitive Landscape</h3>
+    <table>
+      <tr><th>Competitor</th><th>Positioning</th><th>Chess Relevance</th></tr>
+      <tr><td><strong>Chess.com (in-house)</strong></td><td>Self-produces all content. Has its own video team, graphics package, and clip library.</td><td>Biggest potential client is also its own competitor. WSC value-add = automation at scale.</td></tr>
+      <tr><td><strong>Genius Sports</strong></td><td>Data rights and streaming for traditional sports.</td><td>No known chess vertical product.</td></tr>
+      <tr><td><strong>ScorePlay</strong></td><td>Automated social content for sports.</td><td>No confirmed chess presence — window open.</td></tr>
+    </table>
+    <div class="highlight">
+      <strong>Key insight:</strong> Unlike Padel, Chess has no direct competitor already in market for automated WSC-style content. The window is open, but demand is unproven at the client level.
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ════════════════ JIRA LANDSCAPE ════════════════ -->
+<section id="jira">
+  <div class="section-header">
+    <div class="section-tldr tldr-blue">TL;DR &mdash; Chess is referenced internally as a dev estimate (~8 weeks neto). No dedicated epic exists yet. Closest historical reference: "Chess (estimate only)" in engineering baseline discussions.</div>
+    <h2>&#127915; Jira Landscape</h2>
+    <p>Existing ticket history and internal engineering estimates</p>
+  </div>
+
+  <div class="card context">
+    <table>
+      <tr><th>Reference</th><th>Summary</th><th>Status</th><th>Source</th></tr>
+      <tr><td><strong>Engineering Estimate</strong></td><td>Chess as new sport: <strong>6 weeks neto + 2 weeks for new socket = 8 weeks</strong></td><td><span class="badge badge-gray">Estimate only — no ticket</span></td><td>Shahar Cohen, internal estimate</td></tr>
+      <tr><td><strong>No open Epic</strong></td><td>No dedicated Jira epic for Chess as of March 2026</td><td><span class="badge badge-gray">To Create</span></td><td>&mdash;</td></tr>
+      <tr><td><strong>No data inspection</strong></td><td>No chess data provider has been formally inspected</td><td><span class="badge badge-orange">Blocker</span></td><td>&mdash;</td></tr>
+    </table>
+    <div class="highlight">
+      <strong>First action:</strong> Open a Chess exploration epic if a client opportunity materializes. Assign a data provider inspection ticket for Chess.com API or DGT as the critical path.
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ════════════════ DATA PROVIDERS ════════════════ -->
+<section id="providers">
+  <div class="section-header">
+    <div class="section-tldr tldr-blue">TL;DR &mdash; Chess.com API (REST/WebSocket) for online games. DGT hardware boards for OTB. Lichess for open-source fallback. FIDE for ratings. PGN is the universal format.</div>
+    <h2>&#128225; Data Providers</h2>
+    <p>Feed sources, protocols, and integration status for Chess data</p>
+  </div>
+
+  <div class="card context">
+    <table>
+      <tr><th>Provider</th><th>Coverage</th><th>Protocol</th><th>Format</th><th>Status</th></tr>
+      <tr><td><strong>Chess.com API</strong></td><td>Online games, tournaments, player profiles, live broadcasts</td><td>REST + WebSocket</td><td>JSON / PGN</td><td><span class="badge badge-orange">Not inspected</span></td></tr>
+      <tr><td><strong>DGT (Digital Game Technology)</strong></td><td>OTB (over-the-board) elite tournaments — physical board sensors</td><td>USB/WebSocket relay</td><td>PGN (real-time)</td><td><span class="badge badge-orange">Not inspected</span></td></tr>
+      <tr><td><strong>Lichess API</strong></td><td>Online games, open-source tournaments, broadcast API</td><td>REST + NDJSON stream</td><td>PGN / JSON</td><td><span class="badge badge-gray">Open / free</span></td></tr>
+      <tr><td><strong>FIDE</strong></td><td>Player ratings, tournament schedules, OTB results</td><td>REST (limited)</td><td>JSON / XML</td><td><span class="badge badge-gray">Public partial</span></td></tr>
+    </table>
+    <div class="highlight">
+      <strong>Key advantage vs Padel:</strong> Chess has a universal open format (PGN — Portable Game Notation). A single parser handles data from any provider. This significantly reduces per-provider integration effort.
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ════════════════ DATA SAMPLES & PBP ════════════════ -->
+<section id="data-samples">
+  <div class="section-header">
+    <div class="section-tldr tldr-green">TL;DR &mdash; PGN is rich: every move, timestamp, evaluation, opening name, player metadata. Key moments (blunders, brilliancies, decisive positions) are algorithmically derivable from computer eval. No manual tagging needed for core highlights.</div>
+    <h2>&#128300; PGN Feed &amp; Data Analysis</h2>
+    <p>What PGN contains, what it enables, and the ingestion approach. <strong>Data richness is a chess advantage over most sports.</strong></p>
+  </div>
+
+  <div class="card" style="border-left:4px solid var(--green)">
+    <h3>PGN Format — What We Get</h3>
+    <p style="font-size:.85rem;color:var(--gray)">PGN (Portable Game Notation) is the universal chess data format. Every provider outputs PGN.</p>
+    <h4>Sample PGN with Clock &amp; Eval Annotations</h4>
+    <div class="code-block"><pre>[Event "FIDE World Chess Championship 2023"]
+[Site "Astana, Kazakhstan"]
+[Date "2023.04.09"]
+[Round "1"]
+[White "Nepomniachtchi, Ian"]
+[Black "Ding, Liren"]
+[Result "1/2-1/2"]
+[WhiteElo "2795"]
+[BlackElo "2788"]
+[ECO "C65"]
+[Opening "Ruy Lopez: Berlin Defense"]
+[TimeControl "5400+30"]
+
+1. e4 {[%clk 1:30:00]} e5 {[%clk 1:30:00]}
+2. Nf3 {[%clk 1:29:55]} Nc6 {[%clk 1:29:57]}
+...
+34. Rxd7 {[%eval +3.2][%clk 0:08:42]} Rxd7??
+    {[%eval -1.4][%clk 0:02:11]} ← BLUNDER (eval swing: 4.6 pawns)
+35. Qe8# {Checkmate}</pre></div>
+
+    <h4>Fields Available in PGN</h4>
+    <table>
+      <tr><th>Field</th><th>Available?</th><th>Highlight Use</th></tr>
+      <tr><td>Every move (algebraic notation)</td><td>&#9989;</td><td>Full game replay, board animation</td></tr>
+      <tr><td>Clock time per move <code>[%clk]</code></td><td>&#9989; (broadcast PGN)</td><td>Time pressure moments (&lt;1 min)</td></tr>
+      <tr><td>Computer evaluation <code>[%eval]</code></td><td>&#9989; (enriched PGN)</td><td>Brilliancies, blunders, decisive swings</td></tr>
+      <tr><td>Opening name (ECO code)</td><td>&#9989;</td><td>Opening storylines, preparation context</td></tr>
+      <tr><td>Player metadata (Elo, title)</td><td>&#9989;</td><td>Player profile highlights</td></tr>
+      <tr><td>Tournament round / result</td><td>&#9989;</td><td>Tournament bracket, standings</td></tr>
+      <tr><td>Video timestamp sync</td><td>&#9888; Depends on broadcast setup</td><td>Needed for face-cam / board-cam overlay</td></tr>
+      <tr><td>Annotations (!, ??, !?, etc.)</td><td>&#9888; Commentary-dependent</td><td>Human-curated brilliant moves</td></tr>
+    </table>
+  </div>
+
+  <div class="card" style="border-left:4px solid var(--purple)">
+    <h3>Key Moments — Algorithmically Derivable from Eval</h3>
+    <p style="font-size:.85rem;color:var(--gray)">Unlike Padel (where shot-type data doesn't exist in the feed), chess highlights can be algorithmically detected from computer evaluation alone.</p>
+    <table>
+      <tr><th>Moment Type</th><th>Detection Method</th><th>Threshold</th></tr>
+      <tr><td><strong>Blunder (??)</strong></td><td>Eval swing against player &ge; 2.0 pawns</td><td>&ge; 2.0 centipawn loss</td></tr>
+      <tr><td><strong>Brilliant Move (!)</strong></td><td>Eval swing in player's favor, non-obvious (engine depth &gt; 15)</td><td>+1.5 eval, only move</td></tr>
+      <tr><td><strong>Decisive Position</strong></td><td>Eval first crosses ±3.0 (game effectively won)</td><td>|eval| &ge; 3.0</td></tr>
+      <tr><td><strong>Checkmate</strong></td><td>Result in PGN = "1-0" or "0-1" with final move "#"</td><td>Explicit in PGN</td></tr>
+      <tr><td><strong>Sacrifice</strong></td><td>Player gives up material (piece value delta) but eval improves</td><td>Material loss + eval gain</td></tr>
+      <tr><td><strong>Time Pressure</strong></td><td>Clock <code>[%clk]</code> &lt; 60 seconds</td><td>&lt; 60s remaining</td></tr>
+      <tr><td><strong>Tense Position</strong></td><td>Eval oscillates ±1.0 for &ge; 5 consecutive moves</td><td>Fluctuation window</td></tr>
+    </table>
+    <div class="highlight">
+      <strong>This is chess's superpower:</strong> Highlights don't need manual tagging. A Stockfish/Leela eval pass on the PGN produces a fully annotated highlight reel automatically. This is more deterministic than any other sport on the WSC platform.
+    </div>
+  </div>
+
+  <div class="card" style="border-left:4px solid var(--orange)">
+    <h3>&#9888; Critical Dependency — Video Timestamp Sync</h3>
+    <p>PGN captures <em>game data</em> precisely. The challenge is syncing game data to <em>video timestamps</em> for face-cam and board-cam content.</p>
+    <table>
+      <tr><th>Scenario</th><th>Video Sync?</th><th>Notes</th></tr>
+      <tr><td><strong>Online chess (Chess.com broadcast)</strong></td><td>&#9989; Automatic</td><td>Move timestamp in feed matches stream time exactly</td></tr>
+      <tr><td><strong>OTB with DGT board</strong></td><td>&#9989; Automatic</td><td>DGT relay timestamps are broadcast-synced</td></tr>
+      <tr><td><strong>OTB without DGT</strong></td><td>&#10060; Manual or absent</td><td>Human operator must enter moves; delay varies</td></tr>
+      <tr><td><strong>Post-game archive PGN</strong></td><td>&#10060; No timestamps</td><td>Archive PGN has no clock data — eval-only highlights possible</td></tr>
+    </table>
+    <div class="highlight-red">
+      <strong>For automated video highlights:</strong> WSC needs either Chess.com API with live stream sync, or DGT hardware at the venue. Without timestamp sync, content output is board-animation only (no face-cam video cuts).
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ════════════════ SPORT FUNDAMENTALS ════════════════ -->
+<section id="fundamentals">
+  <div class="section-header">
+    <div class="section-tldr tldr-blue">TL;DR &mdash; Chess has 4 competitive formats by time control. Classical (90+30) for championships, Rapid (15+10) and Blitz (5+3) for broadcast-friendliness, Bullet (1-2 min) for online entertainment. Armageddon = decisive tiebreak.</div>
+    <h2>&#9820; Sport Fundamentals</h2>
+    <p>Chess match structure, time controls, scoring, and key rule variants</p>
+  </div>
+
+  <div class="card chess">
+    <div class="grid-2">
+      <div>
+        <h4>Match Format</h4>
+        <ul>
+          <li><strong>1v1</strong> (one player per side)</li>
+          <li>Pieces: King, Queen, Rooks, Bishops, Knights, Pawns</li>
+          <li>White moves first, players alternate</li>
+          <li>Win: Checkmate opponent's King</li>
+          <li>Draw: Stalemate, repetition (3x), 50-move rule, agreement, insufficient material</li>
+          <li>Format: single game, match series (best of N), or round-robin tournament</li>
+        </ul>
+      </div>
+      <div>
+        <h4>Time Controls</h4>
+        <ul>
+          <li><strong>Classical:</strong> 90 min + 30 sec/move (FIDE standard)</li>
+          <li><strong>Rapid:</strong> 15–25 min + 10 sec/move</li>
+          <li><strong>Blitz:</strong> 5 min + 3 sec/move</li>
+          <li><strong>Bullet:</strong> 1–2 min per player</li>
+          <li><strong>Armageddon:</strong> White 5 min, Black 4 min — draw = Black wins. Decisive by rule.</li>
+        </ul>
+      </div>
+    </div>
+    <div style="margin-top:1rem">
+      <h4>Time Controls — Broadcast Value</h4>
+      <table>
+        <tr><th>Format</th><th>Game Duration</th><th>Broadcast Fit</th><th>Highlight Density</th></tr>
+        <tr><td><strong>Classical</strong></td><td>3–7 hours</td><td>&#9888; Long, but prestigious</td><td>Low — 1-2 key moments per game</td></tr>
+        <tr><td><strong>Rapid</strong></td><td>45–90 min</td><td>&#9989; Good balance</td><td>Medium — 3-5 moments per game</td></tr>
+        <tr style="background:#f0fdf4"><td><strong>Blitz</strong></td><td>10–20 min</td><td>&#9989;&#9989; Best for social clips</td><td>High — 5-10 moments per game</td></tr>
+        <tr style="background:#f0fdf4"><td><strong>Bullet</strong></td><td>3–6 min</td><td>&#9989;&#9989; Fastest, most dramatic</td><td>Very High — constant tension</td></tr>
+        <tr><td><strong>Armageddon</strong></td><td>5–9 min</td><td>&#9989;&#9989; Always decisive</td><td>High — guaranteed winner</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="card chess">
+    <h3>Game Progress Structure</h3>
+    <table>
+      <tr><th>Level</th><th>Granularity</th><th>WSC Platform Equivalent</th></tr>
+      <tr><td>Match</td><td>Series of games (e.g., World Championship = 14 games)</td><td>Series / Match (top level)</td></tr>
+      <tr><td>Game</td><td>Single game (1 win = 1 point; draw = 0.5 each)</td><td>Game</td></tr>
+      <tr><td>Move (Ply)</td><td>Each player's individual move. Full move = White + Black.</td><td>Action / Event</td></tr>
+      <tr><td>Position</td><td>Board state after each ply (FEN notation)</td><td>Game state snapshot</td></tr>
+    </table>
+    <div class="highlight">
+      <strong>Scoring note:</strong> Chess uses points, not goals. A win = 1 pt, draw = 0.5 pt each. In tournaments, cumulative points determine standings. The WSC score model needs to support decimal/half-point scoring.
+    </div>
+  </div>
+
+  <div class="card chess">
+    <h3>Key Chess-Specific Concepts for Platform</h3>
+    <table>
+      <tr><th>Concept</th><th>Description</th><th>Platform Relevance</th></tr>
+      <tr><td><strong>ECO Code</strong></td><td>Encyclopedia of Chess Openings — 3-char code (e.g., E97 = King's Indian)</td><td>Opening storylines, preparation context tags</td></tr>
+      <tr><td><strong>Elo Rating</strong></td><td>Numerical skill rating (2800+ = world elite)</td><td>Player profile metadata, matchup framing</td></tr>
+      <tr><td><strong>FEN Notation</strong></td><td>Board position snapshot (e.g., <code>rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR</code>)</td><td>Board animation / thumbnail generation</td></tr>
+      <tr><td><strong>Centipawn (cp)</strong></td><td>Eval unit: 100 cp = 1 pawn advantage. Used by engines.</td><td>Key moment detection threshold</td></tr>
+      <tr><td><strong>Tablebases</strong></td><td>Perfect endgame databases (all &le;7-piece positions solved)</td><td>Endgame accuracy detection for highlights</td></tr>
+    </table>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ════════════════ KEY MOMENTS & HIGHLIGHTS ════════════════ -->
+<section id="actions">
+  <div class="section-header">
+    <div class="section-tldr tldr-purple">TL;DR &mdash; ~70% of chess highlights are algorithmically detectable from eval alone (blunders, brilliancies, decisive swings). The remaining 30% (reactions, dramatic visuals) require face-cam video sync. No manual sport tagging needed for core content.</div>
+    <h2>&#127919; Key Moments &amp; Highlight Events</h2>
+    <p>All highlight-worthy chess moments, their detectability, and content value</p>
+  </div>
+
+  <div class="card chess">
+    <table>
+      <tr><th>Moment</th><th>Description</th><th>Highlight Value</th><th>Detection Method</th></tr>
+      <tr><td><strong>Brilliant Move (!)</strong></td><td>Non-obvious move that significantly improves position, often a sacrifice</td><td>&#128293;&#128293; Very high — shareability peak</td><td>&#9989; Algorithmic (eval + engine depth)</td></tr>
+      <tr><td><strong>Blunder (??)</strong></td><td>Move that drops evaluation by &ge; 2.0 pawns, often game-losing</td><td>&#128293; High — dramatic turning point</td><td>&#9989; Algorithmic (eval swing)</td></tr>
+      <tr><td><strong>Checkmate</strong></td><td>Game-ending move — opponent's King has no escape</td><td>&#128293;&#128293; Maximum — match-deciding</td><td>&#9989; Explicit in PGN (#)</td></tr>
+      <tr><td><strong>Sacrifice</strong></td><td>Deliberately giving up a piece for strategic/tactical compensation</td><td>&#128293;&#128293; Very high — crowd favorite</td><td>&#9989; Algorithmic (material delta + eval gain)</td></tr>
+      <tr><td><strong>Decisive Swing</strong></td><td>Eval crosses &plusmn;3.0 — game effectively decided</td><td>&#128293; High</td><td>&#9989; Algorithmic (eval threshold)</td></tr>
+      <tr><td><strong>Time Pressure</strong></td><td>Player under 60 seconds on clock, making fast moves</td><td>&#128293; High — tension</td><td>&#9989; Algorithmic (clock data)</td></tr>
+      <tr><td><strong>Game-Winning Combination</strong></td><td>Sequence of forced moves leading to material win or checkmate</td><td>&#128293;&#128293; Very high</td><td>&#9989; Algorithmic (forced line + eval)</td></tr>
+      <tr><td><strong>Promotion</strong></td><td>Pawn reaches 8th rank, becomes Queen (or underpromotion)</td><td>Medium</td><td>&#9989; Explicit in PGN (e.g., e8=Q)</td></tr>
+      <tr><td><strong>En Passant</strong></td><td>Rare special pawn capture — often surprises opponents</td><td>Medium — novelty value</td><td>&#9989; Explicit in PGN</td></tr>
+      <tr><td><strong>Resignation</strong></td><td>Player resigns in a lost position</td><td>&#128293; High — match-ending drama</td><td>&#9989; Explicit (result + no checkmate)</td></tr>
+      <tr><td><strong>Draw Offer/Acceptance</strong></td><td>In tense positions, draw endings carry high drama</td><td>Medium — context-dependent</td><td>&#9989; Explicit in PGN</td></tr>
+      <tr><td><strong>Novelty (Theory Exit)</strong></td><td>Player deviates from known opening theory, usually prep</td><td>High for chess fans</td><td>&#9988; ECO database comparison</td></tr>
+      <tr><td><strong>Player Reaction (Face Cam)</strong></td><td>Visible emotional reaction to a key move</td><td>&#128293;&#128293; Viral — non-chess audience hook</td><td>&#10060; Requires video sync + human curation</td></tr>
+    </table>
+  </div>
+
+  <div class="highlight">
+    <strong>Key observation:</strong> Unlike most sports, ~70% of chess highlight moments are <em>algorithmically detectable</em> from the PGN + eval data alone. This is fundamentally different from football, basketball, or even padel — where highlight detection requires action tags that the feed may not provide. Chess is automation-friendly from day one.
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ════════════════ BROADCAST USE CASES ════════════════ -->
+<section id="broadcast">
+  <div class="section-header">
+    <div class="section-tldr tldr-blue">TL;DR &mdash; Primary content types: game highlights (move replay + eval), top moments compilation, player reaction clips, and tournament recaps. Board animation (no live video) is the lowest-cost entry point.</div>
+    <h2>&#127916; Broadcast &amp; Highlight Use Cases</h2>
+    <p>How chess content is consumed and which formats drive engagement</p>
+  </div>
+  <div class="card chess">
+    <table>
+      <tr><th>Content Type</th><th>Description</th><th>Video Required?</th><th>Priority</th></tr>
+      <tr><td><strong>Game Recap — Board Animation</strong></td><td>Animated board replay with eval bar, key moments highlighted, narrative captions</td><td>&#10060; Board animation only</td><td>&#9989;&#9989; Start here</td></tr>
+      <tr><td><strong>Top Moments Compilation</strong></td><td>"3 best moves from today's games" — short vertical clip with board animation</td><td>&#10060; Board animation only</td><td>&#9989;&#9989; High social value</td></tr>
+      <tr><td><strong>Brilliant Move Clip</strong></td><td>Single-move clip: position → move → eval swing visualization</td><td>&#9888; Optional face-cam layer</td><td>&#9989;&#9989; Shareable</td></tr>
+      <tr><td><strong>Player Face-Cam Highlight</strong></td><td>Player reaction during/after a key move. Requires video sync.</td><td>&#9989; Requires live video</td><td>&#128293; High impact, high cost</td></tr>
+      <tr><td><strong>Time Pressure Clip</strong></td><td>Last 60 seconds of player's clock — fast moves, high tension</td><td>&#9989; Best with face-cam</td><td>Medium</td></tr>
+      <tr><td><strong>Tournament Recap</strong></td><td>Round/tournament summary: standings, decisive games, top moments</td><td>&#10060; / Optional</td><td>Medium</td></tr>
+      <tr><td><strong>Opening Storyline</strong></td><td>"Both players used the Sicilian Dragon — here's what happened"</td><td>&#10060; Graphics</td><td>Niche — chess fans</td></tr>
+      <tr><td><strong>Endgame Magic</strong></td><td>Precise endgame technique — leveraging tablebases for accuracy score</td><td>&#10060; Board animation</td><td>Niche</td></tr>
+    </table>
+    <div class="highlight">
+      <strong>Entry point recommendation:</strong> Board animation + eval-based highlights require <em>zero video infrastructure</em>. WSC can deliver content with PGN data alone. Face-cam content is the upsell once Chess.com provides stream sync access.
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ════════════════ WHY CHESS IS UNIQUE ════════════════ -->
+<section id="why-unique">
+  <div class="section-header">
+    <div class="section-tldr tldr-red">TL;DR &mdash; Chess has no video-based action feed. "Highlights" are positions and moves, not physical events. No existing sport on WSC is a usable parent. It requires a new content paradigm — board animation as the primary output.</div>
+    <h2>&#9888; Why Chess is Fundamentally Different</h2>
+    <p>Why no existing sport type works as a parent, and what that means for architecture</p>
+  </div>
+
+  <div class="card" style="border-left:4px solid var(--red)">
+    <h3>Chess vs Every Existing WSC Sport Type</h3>
+    <table>
+      <tr><th>#</th><th>Dimension</th><th>All Current Sports</th><th>Chess</th><th>Verdict</th></tr>
+      <tr><td><strong>1</strong></td><td><strong>Primary content output</strong></td><td>Video clips (goal, action, play)</td><td>Board animation + move sequence</td><td style="color:var(--red)">&#10060; Different content paradigm</td></tr>
+      <tr><td><strong>2</strong></td><td><strong>Highlight trigger</strong></td><td>Physical event (goal, point, tackle)</td><td>Mathematical evaluation swing (centipawns)</td><td style="color:var(--red)">&#10060; No physical event model</td></tr>
+      <tr><td><strong>3</strong></td><td><strong>Game progress</strong></td><td>Score, period/half/set, possession</td><td>Move number, material balance, eval, clock</td><td style="color:var(--red)">&#10060; No score until game ends</td></tr>
+      <tr><td><strong>4</strong></td><td><strong>Actions</strong></td><td>Tagged physical events (pass, shot, tackle)</td><td>Algebraic moves (e4, Nf3, Rxd7#) + derived events</td><td style="color:var(--red)">&#10060; Actions require engine analysis, not tagging</td></tr>
+      <tr><td><strong>5</strong></td><td><strong>Team structure</strong></td><td>Teams or players with roles</td><td>1v1 with identical piece set (symmetric)</td><td style="color:var(--orange)">&#9888; 1v1 resolver possible, but no roles</td></tr>
+      <tr><td><strong>6</strong></td><td><strong>Video sync model</strong></td><td>Feed event timestamp → video cut</td><td>Move timestamp → board position (video optional)</td><td style="color:var(--orange)">&#9888; Timestamp sync exists only with broadcast feed</td></tr>
+    </table>
+  </div>
+
+  <div class="card" style="border-left:4px solid var(--red)">
+    <h3>Why No Existing Sub-Sport Parent Works</h3>
+    <p style="margin-bottom:1rem">Unlike Padel (which shares Tennis scoring), Chess has <em>no scoring, no physical actions, and no video event model</em> in common with any WSC sport.</p>
+    <table>
+      <tr><th>Candidate Parent</th><th>Shared With Chess</th><th>Would Need to Override</th><th>Verdict</th></tr>
+      <tr><td>Tennis (1v1)</td><td>1v1 format</td><td>Scoring, video events, game progress, all actions, content type</td><td style="color:var(--red)">&#10060; Override everything</td></tr>
+      <tr><td>Badminton / TT (1v1)</td><td>1v1 format</td><td>Same as Tennis — rally-point scoring, physical actions, video</td><td style="color:var(--red)">&#10060; Override everything</td></tr>
+      <tr><td>Esports / Gaming (hypothetical)</td><td>Digital event model</td><td>WSC doesn't have this type yet</td><td style="color:var(--orange)">&#9888; Closest conceptually, doesn't exist</td></tr>
+    </table>
+    <div class="highlight-red">
+      <strong>Bottom line:</strong> Chess is not "racquet sport without a ball." It's a fundamentally different content type. A sub-sport approach would require overriding 100% of the parent logic — defeating the purpose entirely. <strong>If Chess is onboarded, it must be a new sport.</strong>
+    </div>
+  </div>
+
+  <div class="card" style="border-left:4px solid var(--orange)">
+    <h3>The New Content Paradigm: Board Animation as Primary Output</h3>
+    <p>For Chess, WSC's traditional content stack (Clipro → video clip → publish) would need a parallel output type:</p>
+    <table>
+      <tr><th>Traditional WSC Pipeline</th><th>Chess Pipeline (New)</th></tr>
+      <tr><td>Video ingestion → action detection → clip</td><td>PGN ingestion → eval pass → board animation render</td></tr>
+      <tr><td>Clipro tags physical events</td><td>Engine annotates moves automatically</td></tr>
+      <tr><td>MovieCreator assembles video clips</td><td>Board renderer assembles animated positions</td></tr>
+      <tr><td>Output: MP4 video highlight</td><td>Output: Animated board GIF/MP4 + optional face-cam overlay</td></tr>
+    </table>
+    <div class="highlight">
+      <strong>Opportunity:</strong> This pipeline could be generalizable to other mind sports (Go, Poker, Darts scorecard animation). Chess could seed a "non-physical sports" framework.
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ════════════════ DEV ROADMAP ════════════════ -->
+<section id="roadmap">
+  <div class="section-header">
+    <div class="section-tldr tldr-green">TL;DR &mdash; Phase 0: Validate client demand (Chess.com conversation). Phase 1: Board animation MVP using existing data, zero video infra. Phase 2: Full sport type + eval pipeline. Phase 3: Face-cam video sync.</div>
+    <h2>&#128506;&#65039; Development Roadmap &amp; First Steps</h2>
+    <p>Phased approach — validate before building, board animation before video</p>
+  </div>
+
+  <div class="card" style="border-left:4px solid var(--green)">
+    <h3>Phase 0 &mdash; Validate Demand (Now, 0 sprints)</h3>
+    <ul>
+      <li>Identify whether Chess.com, FIDE, or any client has expressed interest</li>
+      <li>Check Salesforce for any chess-related opportunities</li>
+      <li>Get sample PGN + stream data from Chess.com API (publicly available)</li>
+      <li>Assess whether board animation output fits WSC's delivery stack</li>
+    </ul>
+  </div>
+
+  <div class="card" style="border-left:4px solid var(--green)">
+    <h3>Phase 1 &mdash; Board Animation MVP (2&ndash;3 sprints)</h3>
+    <ul>
+      <li>PGN parser: ingest Chess.com or Lichess API feed</li>
+      <li>Stockfish eval pass: annotate moves with centipawn eval</li>
+      <li>Key moment detection: blunders, brilliancies, decisive swings, checkmate</li>
+      <li>Board animation renderer: FEN → animated SVG/canvas → MP4</li>
+      <li>Output: short highlight clips (board only) — no video infrastructure needed</li>
+    </ul>
+    <div class="highlight">
+      <strong>Why start here:</strong> Board animation requires <em>zero live video infrastructure</em>. Can be built as a standalone microservice. Proves the content value to a client without the full WSC sport onboarding overhead.
+    </div>
+  </div>
+
+  <div class="card" style="border-left:4px solid var(--blue)">
+    <h3>Phase 2 &mdash; Full Chess Sport Type (4&ndash;6 sprints)</h3>
+    <ul>
+      <li>New <code>SystemTypeId</code> for Chess</li>
+      <li>Resolver: <code>ChessResolver</code> with move-based game state (FEN, eval, clock)</li>
+      <li>Actions: Brilliant, Blunder, Checkmate, Sacrifice, Promotion, TimePressure, DecisiveSwing</li>
+      <li>Game progress: Move number, eval score, clock, material count, phase (Opening/Middlegame/Endgame)</li>
+      <li>Ingestion adapter: Chess.com WebSocket or DGT relay</li>
+      <li>Integration with eval engine (Stockfish on WSC infra or cloud API)</li>
+    </ul>
+    <p><strong>Dev estimate (internal reference, Shahar Cohen):</strong> ~6 weeks neto + 2 weeks for new socket = <strong>~8 weeks neto / ~3&ndash;4 months calendar</strong></p>
+  </div>
+
+  <div class="card" style="border-left:4px solid var(--orange)">
+    <h3>Phase 3 &mdash; Face-Cam Video Integration (2&ndash;3 sprints)</h3>
+    <ul>
+      <li>Negotiate video stream + timestamp sync access with Chess.com or FIDE broadcast team</li>
+      <li>Build video sync layer: move timestamp → video timecode → face-cam cut</li>
+      <li>Compose: board animation + face-cam overlay = full broadcast-quality highlight</li>
+      <li>This is the premium tier — high visual impact, most similar to WSC's traditional output</li>
+    </ul>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ════════════════ SOLUTION A ════════════════ -->
+<section id="sol-a">
+  <div class="section-header">
+    <div class="section-tldr tldr-blue">TL;DR &mdash; Full standalone Chess sport type. ~8 weeks neto / ~4 months calendar. New content paradigm (board animation). High but justified investment if Chess.com or FIDE signs.</div>
+    <h2 style="color:var(--blue)">Solution A &mdash; Chess as a New Sport</h2>
+    <p><span class="badge badge-blue">New SystemTypeId</span> <span class="badge badge-blue">Full Sport Stack</span> <span class="badge badge-blue">Eval-Driven Highlights</span></p>
+  </div>
+
+  <div class="card sol-a">
+    <h3>Architecture Overview</h3>
+    <p>Chess gets its own <code>SystemTypeId</code> (e.g., 55), its own resolver (<code>ChessResolver</code>), a PGN ingestion adapter, an eval-based action detection pipeline, and a board animation rendering engine. This is a fundamentally new content type — not a video-clip sport.</p>
+  </div>
+
+  <div class="card sol-a">
+    <h3>What Gets Created</h3>
+    <table>
+      <tr><th>Component</th><th>Files / Entities</th></tr>
+      <tr><td>DB: SystemTypes</td><td>New row: <code>Chess = 55</code> (or next available ID)</td></tr>
+      <tr><td>DB: SportConfigurations</td><td>TimeControl, Format (Classical/Rapid/Blitz/Bullet), Rating system</td></tr>
+      <tr><td>DB: Actions</td><td>BrilliantMove, Blunder, Checkmate, Sacrifice, Promotion, TimePressure, DecisivePosition, EnPassant, Resignation, DrawAgreement</td></tr>
+      <tr><td>DB: ActionParametersSets</td><td>EvalBefore, EvalAfter, MoveNotation (SAN), ECOCode, ClockRemaining, MaterialBalance, GamePhase</td></tr>
+      <tr><td>DB: SportDefinitions</td><td>GameProgress (MoveNumber, Eval, Clock, FEN, Phase) + Score (decimal/half-point)</td></tr>
+      <tr><td>Code: Resolver</td><td><code>ChessResolver.cs</code> + <code>ChessResolverTypes.cs</code></td></tr>
+      <tr><td>Code: Ingestion</td><td>PGN parser + Chess.com API adapter + eval pipeline (Stockfish wrapper)</td></tr>
+      <tr><td>Code: Renderer</td><td>Board animation engine: FEN → SVG/Canvas → MP4 (new component)</td></tr>
+      <tr><td>Code: MovieCreator</td><td>ChessMovieCreator — assembles board animation clips with captions</td></tr>
+      <tr><td>Code: Enums</td><td><code>SystemTypes.cs</code>, <code>ResolverTypes.cs</code> updates</td></tr>
+    </table>
+  </div>
+
+  <div class="card sol-a">
+    <h3>Game Progress Definition</h3>
+    <table>
+      <tr><th>Property</th><th>Type</th><th>Values</th></tr>
+      <tr><td>MoveNumber</td><td>Int</td><td>1–N (full move count)</td></tr>
+      <tr><td>FEN</td><td>String</td><td>Current board position (FEN notation)</td></tr>
+      <tr><td>EvalCentipawns</td><td>Int</td><td>+/- centipawns; +∞ = White wins; -∞ = Black wins</td></tr>
+      <tr><td>ClockWhite / ClockBlack</td><td>Int (seconds)</td><td>Remaining time per player</td></tr>
+      <tr><td>MaterialBalance</td><td>Int</td><td>White material – Black material (pawn units)</td></tr>
+      <tr><td>GamePhase</td><td>Enum</td><td>Opening, Middlegame, Endgame</td></tr>
+      <tr><td>IsTimePressure</td><td>Bool</td><td>Either player &lt; 60 seconds</td></tr>
+    </table>
+  </div>
+
+  <div class="card sol-a">
+    <h3>Effort Estimate</h3>
+    <table>
+      <tr><th>Work Stream</th><th>People</th><th>Duration</th></tr>
+      <tr><td>DB: SystemType + sport config + actions</td><td>1 dev + 1 sport analyst</td><td>1 sprint</td></tr>
+      <tr><td>Resolver + GameProgress</td><td>1 dev</td><td>1–2 sprints</td></tr>
+      <tr><td>PGN ingestion adapter + eval pipeline</td><td>1–2 devs</td><td>2 sprints (new socket: +1 sprint)</td></tr>
+      <tr><td>Board animation renderer (new component)</td><td>1 FE/graphics dev</td><td>2–3 sprints</td></tr>
+      <tr><td>ChessMovieCreator</td><td>1 dev</td><td>1 sprint</td></tr>
+      <tr><td>QA + validation</td><td>1 QA + 1 analyst</td><td>1 sprint</td></tr>
+      <tr><td><strong>Total</strong></td><td><strong>~2–3 devs + analyst + QA</strong></td><td><strong>~6–8 weeks neto / 3–4 months calendar</strong></td></tr>
+    </table>
+    <div class="highlight">
+      <strong>Internal reference:</strong> Shahar Cohen estimated 6 weeks neto + 2 weeks for a new data socket = ~8 weeks neto for a new sport. Chess aligns with this. The board animation renderer is the unique additional component.
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ════════════════ SOL A PROS/CONS ════════════════ -->
+<section id="sol-a-proscons">
+  <div class="section-header">
+    <div class="section-tldr tldr-blue">TL;DR &mdash; Best long-term expressiveness. Eval-driven automation is actually easier than most sports. Main risk: board animation renderer is a new component unlike anything WSC has built.</div>
+    <h2 style="color:var(--blue)">Solution A &mdash; Pros &amp; Cons</h2>
+    <p>Trade-off analysis for building Chess as a standalone sport</p>
+  </div>
+  <div class="grid-2">
+    <div class="card sol-a">
+      <h3 class="pro">&#9989; Pros</h3>
+      <ul>
+        <li><strong>Automation advantage</strong> &mdash; Eval-based highlight detection is <em>more deterministic</em> than most sports. No manual tagging needed.</li>
+        <li><strong>PGN universality</strong> &mdash; One parser serves all chess providers (Chess.com, Lichess, DGT, FIDE)</li>
+        <li><strong>No video dependency for MVP</strong> &mdash; Board animation works without live video infrastructure</li>
+        <li><strong>Clean architecture</strong> &mdash; Chess is genuinely unique; forcing it under another sport would be architecturally wrong</li>
+        <li><strong>Future platform</strong> &mdash; Opens "mind sports" category (Go, Checkers, Bridge, Poker)</li>
+        <li><strong>Chess audience is digital-native</strong> &mdash; Social clip appetite is huge (Chess.com has 1B+ views/month)</li>
+        <li><strong>Reasonable effort</strong> &mdash; 8 weeks neto is comparable to a Tennis sub-sport</li>
+      </ul>
+    </div>
+    <div class="card sol-a">
+      <h3 class="con">&#10060; Cons</h3>
+      <ul>
+        <li><strong>New content paradigm</strong> &mdash; Board animation renderer doesn't exist in WSC stack. New component to build and maintain.</li>
+        <li><strong>Eval engine dependency</strong> &mdash; Stockfish integration adds infra complexity. Needs compute resources.</li>
+        <li><strong>No signed clients</strong> &mdash; Full build without confirmed revenue is risky</li>
+        <li><strong>Chess.com self-sufficiency</strong> &mdash; Biggest potential client already has in-house content team. WSC value-add must be automation at scale.</li>
+        <li><strong>Face-cam requires negotiation</strong> &mdash; Video sync access from Chess.com/FIDE broadcast is not guaranteed</li>
+        <li><strong>Niche market</strong> &mdash; Chess client base is likely smaller than Soccer or Basketball</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ════════════════ SOLUTION B ════════════════ -->
+<section id="sol-b">
+  <div class="section-header">
+    <div class="section-tldr tldr-green">TL;DR &mdash; Manual board animation MVP: build a lightweight PGN → animation tool, hand it to an analyst. Zero sport infrastructure. Validates demand and delivers content before any platform investment.</div>
+    <h2 style="color:var(--green)">Solution B &mdash; Manual / Board Animation MVP</h2>
+    <p><span class="badge badge-green">No Sport Type</span> <span class="badge badge-green">PGN-only</span> <span class="badge badge-green">Analyst-operated</span></p>
+  </div>
+
+  <div class="card sol-b">
+    <h3>Approach Overview</h3>
+    <p>Skip the WSC platform entirely for now. Build a standalone lightweight tool: feed it a PGN file, it outputs annotated board animation clips. An analyst operates it to produce content. No Resolver, no SystemTypeId, no MovieCreator integration.</p>
+  </div>
+
+  <div class="card sol-b">
+    <h3>What Gets Built</h3>
+    <table>
+      <tr><th>Component</th><th>Detail</th><th>Effort</th></tr>
+      <tr><td>PGN parser</td><td>Reads Chess.com / Lichess PGN files. Extracts moves, eval annotations, clock.</td><td>0.5 sprints</td></tr>
+      <tr><td>Key moment detector</td><td>Rule-based: blunders (&ge;2.0 eval swing), checkmates, brilliancies. No Stockfish needed if eval is in PGN.</td><td>0.5 sprints</td></tr>
+      <tr><td>Board animation renderer</td><td>Standalone tool. FEN → animated board MP4/GIF. Open-source libraries available (chess.js, chessboard.js).</td><td>1–2 sprints</td></tr>
+      <tr><td>Analyst workflow</td><td>Upload PGN → select key moments → render clip → export. No WSC platform integration.</td><td>0 dev (analyst-operated)</td></tr>
+    </table>
+  </div>
+
+  <div class="card sol-b">
+    <h3>Effort Estimate</h3>
+    <table>
+      <tr><th>Work Stream</th><th>People</th><th>Duration</th></tr>
+      <tr><td>PGN parser + key moment detection</td><td>1 dev</td><td>1 sprint</td></tr>
+      <tr><td>Board animation renderer (standalone)</td><td>1 dev</td><td>1–2 sprints</td></tr>
+      <tr><td>Analyst UI (minimal)</td><td>1 FE dev</td><td>1 sprint</td></tr>
+      <tr><td><strong>Total</strong></td><td><strong>1–2 devs</strong></td><td><strong>2–4 sprints (~1–2 months)</strong></td></tr>
+    </table>
+    <div class="highlight">
+      <strong>Why this works for Chess specifically:</strong> Unlike Padel (where manual clipping meant a human watching video), Chess manual operation means running a PGN through a script. The "manual" is the analyst choosing which games to process — the annotation is automated from the PGN eval data. Operational cost per game is <em>minutes, not hours</em>.
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ════════════════ SOL B PROS/CONS ════════════════ -->
+<section id="sol-b-proscons">
+  <div class="section-header">
+    <div class="section-tldr tldr-green">TL;DR &mdash; Fastest path to content with lowest risk. Doesn't scale to real-time or multi-sport, and can't leverage WSC's distribution network without platform integration.</div>
+    <h2 style="color:var(--green)">Solution B &mdash; Pros &amp; Cons</h2>
+    <p>Trade-off analysis for the manual board animation MVP</p>
+  </div>
+  <div class="grid-2">
+    <div class="card sol-b">
+      <h3 class="pro">&#9989; Pros</h3>
+      <ul>
+        <li><strong>2–4 sprints vs 6–8</strong> &mdash; Half the investment of a full sport type</li>
+        <li><strong>Validates demand</strong> &mdash; Can show a client real content before building the platform</li>
+        <li><strong>Low operational cost</strong> &mdash; PGN processing is near-instant. Analyst time = minutes/game.</li>
+        <li><strong>Uses open-source chess libraries</strong> &mdash; chess.js, Stockfish WASM — no reinvention</li>
+        <li><strong>Zero risk if market doesn't materialize</strong> &mdash; Standalone tool, not baked into core platform</li>
+        <li><strong>Reusable renderer</strong> &mdash; Board animation engine built here feeds Phase 2 (Solution A)</li>
+      </ul>
+    </div>
+    <div class="card sol-b">
+      <h3 class="con">&#10060; Cons</h3>
+      <ul>
+        <li><strong>Not real-time</strong> &mdash; Requires post-game PGN. Can't do live tournament highlights.</li>
+        <li><strong>No WSC distribution</strong> &mdash; Content doesn't flow through the WSC platform. No client SDK, no API publish.</li>
+        <li><strong>Doesn't scale</strong> &mdash; Manual analyst selection per game becomes a bottleneck at volume</li>
+        <li><strong>No face-cam video</strong> &mdash; Board animation only. Premium broadcast-quality content needs Phase 2.</li>
+        <li><strong>Tech debt</strong> &mdash; Standalone tool will need rework when integrating with the platform</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ════════════════ HISTORICAL EVIDENCE ════════════════ -->
+<section id="historical">
+  <div class="section-header">
+    <div class="section-tldr tldr-blue">TL;DR &mdash; Chess was estimated internally at 8 weeks neto. AFL (new sport) took ~3 months. Athletics (multi-sub-sport) took 10-12 months. Chess is closer to AFL in complexity but with a simpler event model.</div>
+    <h2>&#128200; Historical Evidence &mdash; New Sport Benchmarks</h2>
+    <p>Real delivery data from past sport launches on the WSC platform</p>
+  </div>
+
+  <div class="card" style="border-left:4px solid var(--blue)">
+    <h3>New Sport Launch Benchmarks</h3>
+    <table>
+      <tr><th>Sport</th><th>Calendar Time</th><th>Neto Dev</th><th>Key Issues</th><th>Chess Parallel</th></tr>
+      <tr><td><strong>AFL / Aussie Rules</strong></td><td>~3 months</td><td>6–8 weeks</td><td>Unique scoring (Goal=6pt, Behind=1pt). Custom box score. New action set.</td><td>Chess also has unique scoring (0.5 pts) and novel action types. Similar complexity.</td></tr>
+      <tr><td><strong>Athletics</strong></td><td>10–12 months</td><td>2–3 months neto</td><td>Olympics scope. Multiple sub-sports. Broad action set.</td><td>Chess is simpler — single discipline, universal PGN format.</td></tr>
+      <tr><td><strong>Yacht Sailing</strong></td><td>In progress</td><td>TBD</td><td>Non-traditional sport. Race format vs. score format.</td><td>Most similar conceptually to Chess — both are non-ball, non-score traditional sports.</td></tr>
+      <tr style="background:#eff6ff"><td><strong>Chess (internal estimate)</strong></td><td>Not shipped</td><td><strong>6 wks neto + 2 wks socket = 8 wks</strong></td><td>Estimate only — no actual delivery data.</td><td><strong>This is the direct benchmark.</strong></td></tr>
+    </table>
+  </div>
+
+  <div class="card" style="border-left:4px solid var(--green)">
+    <h3>What's Easier for Chess vs Other New Sports</h3>
+    <table>
+      <tr><th>Factor</th><th>Chess Advantage</th></tr>
+      <tr><td>Data format</td><td>PGN is universal — one parser serves all providers. No Foxtenn vs Crionet ambiguity.</td></tr>
+      <tr><td>Highlight detection</td><td>Algorithmic from eval. No custom ML model needed to detect key moments.</td></tr>
+      <tr><td>Action definition</td><td>Actions derived from mathematical rules, not sport analyst judgment calls.</td></tr>
+      <tr><td>Data completeness</td><td>PGN is complete — every move, clock, eval. No "missing field" issue like Padel shot types.</td></tr>
+    </table>
+  </div>
+
+  <div class="card" style="border-left:4px solid var(--orange)">
+    <h3>What's Harder for Chess vs Other New Sports</h3>
+    <table>
+      <tr><th>Factor</th><th>Chess Challenge</th></tr>
+      <tr><td>Content output type</td><td>Board animation renderer is a net-new component. Not a video clip pipeline.</td></tr>
+      <tr><td>Eval engine infra</td><td>Stockfish integration or cloud eval API adds new infrastructure dependency.</td></tr>
+      <tr><td>Video sync</td><td>Linking PGN timestamps to face-cam video requires negotiated access from Chess.com/FIDE broadcast.</td></tr>
+      <tr><td>Market validation</td><td>Chess is unproven at WSC. No client commitment before any investment.</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>Engineering Baseline Estimates (Applicable to Chess)</h3>
+    <table>
+      <tr><th>Source</th><th>Estimate</th><th>Context</th></tr>
+      <tr><td>Shahar Cohen (Nov 2023)</td><td><strong>6 weeks neto</strong> for a new sport. +2 weeks for new data connection.</td><td>"Neto time, considering a developer working 100%"</td></tr>
+      <tr><td>Shahar Cohen (direct Chess estimate)</td><td><strong>8 weeks neto total</strong></td><td>Chess specifically cited in engineering discussion</td></tr>
+      <tr><td>Dan Dragucki (Jan 2025)</td><td><strong>1.5–2 months</strong> without ingestion, <strong>3 months</strong> with ingestion.</td><td>FIS skiing sport model — comparable new sport scope</td></tr>
+    </table>
+    <div class="highlight">
+      <strong>Applying to Chess:</strong><br>
+      &bull; <strong>New sport (Solution A):</strong> ~6 weeks neto + 2 weeks PGN ingestion + 2 weeks board renderer = <strong>~10 weeks neto / ~4 months calendar</strong><br>
+      &bull; <strong>Manual MVP (Solution B):</strong> ~2–4 sprints for standalone tool = <strong>~4–8 weeks / ~1.5–2 months calendar</strong><br>
+      &bull; <strong>Delta:</strong> Manual MVP saves ~6 weeks neto but lacks platform integration
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ════════════════ COMPARISON TABLE ════════════════ -->
+<section id="comparison">
+  <div class="section-header">
+    <div class="section-tldr tldr-blue">TL;DR &mdash; Manual MVP = 2-4 sprints, board-animation only. New Sport = 8-10 sprints, full platform integration with real-time capability. No sub-sport option exists for Chess.</div>
+    <h2>&#9878;&#65039; Side-by-Side Comparison</h2>
+    <p>Both solutions compared across every dimension</p>
+  </div>
+
+  <div class="card">
+    <table>
+      <tr><th>Dimension</th><th style="color:var(--blue)">A: New Sport</th><th style="color:var(--green)">B: Manual MVP</th></tr>
+      <tr><td><strong>Dev Effort</strong></td><td>8–10 sprints</td><td><strong>2–4 sprints</strong></td></tr>
+      <tr><td><strong>People</strong></td><td>2–3 devs + analyst + QA</td><td>1–2 devs</td></tr>
+      <tr><td><strong>Time to Market</strong></td><td>~3–4 months</td><td><strong>~1.5–2 months</strong></td></tr>
+      <tr><td><strong>Real-time Capability</strong></td><td>&#9989; Live game ingestion</td><td>&#10060; Post-game only</td></tr>
+      <tr><td><strong>WSC Distribution</strong></td><td>&#9989; Full SDK + publish pipeline</td><td>&#10060; Standalone tool only</td></tr>
+      <tr><td><strong>Automation Level</strong></td><td>&#9989; Fully automated (eval pipeline)</td><td>&#9988; Semi-auto (analyst selects games)</td></tr>
+      <tr><td><strong>Face-Cam Video</strong></td><td>&#9989; Phase 3 (with sync)</td><td>&#10060; Board animation only</td></tr>
+      <tr><td><strong>Board Animation</strong></td><td>&#9989; Native output</td><td>&#9989; Core output</td></tr>
+      <tr><td><strong>Scalability</strong></td><td>&#9989; Handles any volume</td><td>&#10060; Bottleneck at scale</td></tr>
+      <tr><td><strong>Risk if No Client</strong></td><td>&#10060; Higher sunk cost</td><td>&#9989; Minimal sunk cost</td></tr>
+      <tr><td><strong>Future Path</strong></td><td>&#9989; Extends to mind sports category</td><td>&#9989; Board renderer reused in Solution A</td></tr>
+      <tr><td><strong>Eval Engine Required</strong></td><td>&#9989; Yes (Stockfish infra)</td><td>&#9988; Only if eval not in PGN</td></tr>
+      <tr><td><strong>Sub-Sport Option?</strong></td><td colspan="2" style="text-align:center;background:#fef2f2;color:var(--red)">&#10060; Not applicable — no suitable parent sport on WSC</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>Investment vs Pipeline</h3>
+    <table>
+      <tr><th>Solution</th><th>Engineering Effort</th><th>Pipeline</th><th>Verdict</th></tr>
+      <tr><td style="color:var(--green)"><strong>B: Manual MVP</strong></td><td>2–4 sprints, 1–2 devs</td><td rowspan="2">Unconfirmed</td><td style="color:var(--green)">Best ROI — validates before building. Board renderer is reusable for Solution A.</td></tr>
+      <tr><td style="color:var(--blue)"><strong>A: New Sport</strong></td><td>8–10 sprints, 2–3 devs</td><td style="color:var(--orange)">Justified <em>only</em> if Chess.com or FIDE signs. Otherwise premature.</td></tr>
+    </table>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ════════════════ RECOMMENDATION ════════════════ -->
+<section id="recommendation">
+  <div class="section-header">
+    <div class="section-tldr tldr-green">TL;DR &mdash; Phase 1: Board Animation MVP now (2–4 sprints). Phase 2: Full New Sport on client signature (add ~6 sprints). The renderer built in Phase 1 feeds Phase 2 — no throwaway work.</div>
+    <h2>&#127919; Recommendation</h2>
+    <p>Pragmatic path forward with graduation criteria</p>
+  </div>
+
+  <div class="verdict">
+    <h3>Phased Approach: Board Animation MVP &rarr; Full Chess Sport</h3>
+    <p style="margin-top:.75rem">Chess is genuinely promising — strong digital audience, excellent data richness, and algorithmic highlight detection that makes automation easier than most sports. But with no signed clients and a new content paradigm (board animation), the right move is to <em>validate before building the full platform</em>.</p>
+    <ol style="margin-top:1rem">
+      <li><strong>Phase 1 &mdash; Now: Board Animation MVP (B)</strong> &mdash; 2–4 sprints. PGN parser + key moment detection + standalone board renderer. No platform integration. Can demo real chess highlights to Chess.com or FIDE in 6–8 weeks.</li>
+      <li><strong>Phase 2 &mdash; On deal signature: Full New Sport (A)</strong> &mdash; 6–8 additional sprints. Add <code>ChessSystemTypeId</code>, resolver, WSC ingestion, real-time pipeline, and platform distribution. Board renderer from Phase 1 is reused — not thrown away.</li>
+      <li><strong>Phase 3 &mdash; With broadcast partner: Face-Cam Video</strong> &mdash; 2–3 sprints. Negotiate timestamp sync with Chess.com/FIDE. Add face-cam overlay. Premium output tier.</li>
+    </ol>
+  </div>
+
+  <div class="card" style="margin-top:1.25rem">
+    <h3>Graduation Triggers (Move to Solution A When):</h3>
+    <table>
+      <tr><th>Trigger</th><th>Threshold</th></tr>
+      <tr><td>Signed chess client</td><td>&ge; 1 confirmed client (Chess.com, FIDE, national federation)</td></tr>
+      <tr><td>Chess ARR pipeline</td><td>&ge; $150K confirmed</td></tr>
+      <tr><td>Real-time demand</td><td>Client requires live tournament coverage (not post-game)</td></tr>
+      <tr><td>Volume threshold</td><td>&ge; 20 games/day requiring automated processing</td></tr>
+      <tr><td>Distribution requirement</td><td>Client needs WSC SDK delivery, not standalone tool</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>Immediate Next Steps</h3>
+    <ol>
+      <li>&#128202; <strong>Check Salesforce</strong> — any chess-related opportunities or conversations?</li>
+      <li>&#128172; <strong>Chess.com outreach</strong> — informal BD conversation. Do they have a content automation gap?</li>
+      <li>&#128300; <strong>Chess.com API exploration</strong> — pull a sample PGN with eval from their public API. Assess timestamp quality.</li>
+      <li>&#127915; <strong>Open Jira epic</strong> — Chess exploration epic if demand signal exists.</li>
+      <li>&#128293; <strong>Quick spike</strong> — 1 dev, 1 week: PGN → eval → board animation POC. Shareable demo.</li>
+    </ol>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ════════════════ REFERENCES ════════════════ -->
+<section id="references">
+  <div class="section-header">
+    <div class="section-tldr tldr-gray">TL;DR &mdash; All source links in one place.</div>
+    <h2>&#128206; All Sources &amp; References</h2>
+    <p>Every link referenced in this document</p>
+  </div>
+
+  <div class="card">
+    <h3>Chess Rules &amp; Resources</h3>
+    <ul>
+      <li><a href="https://www.fide.com/fide/handbook.html" target="_blank">FIDE Handbook &mdash; Official Laws of Chess</a></li>
+      <li><a href="https://www.chess.com/learn-how-to-play-chess" target="_blank">Chess.com &mdash; How to Play Chess</a></li>
+      <li><a href="https://en.wikipedia.org/wiki/Portable_Game_Notation" target="_blank">Wikipedia &mdash; PGN (Portable Game Notation)</a></li>
+      <li><a href="https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation" target="_blank">Wikipedia &mdash; FEN (Forsyth-Edwards Notation)</a></li>
+      <li><a href="https://www.chess.com/terms/chess-time-controls" target="_blank">Chess.com &mdash; Time Controls Explained</a></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>Data Providers &amp; APIs</h3>
+    <ul>
+      <li><a href="https://www.chess.com/news/view/published-data-api" target="_blank">Chess.com Public Data API Documentation</a></li>
+      <li><a href="https://lichess.org/api" target="_blank">Lichess API Documentation (Open Source)</a></li>
+      <li><a href="https://www.dgtshop.nl/products/dgt-broadcast-equipment" target="_blank">DGT Broadcast Equipment (OTB board hardware)</a></li>
+      <li><a href="https://ratings.fide.com/download_lists.phtml" target="_blank">FIDE Rating Lists &amp; Player Data</a></li>
+      <li><a href="https://github.com/jhlywa/chess.js" target="_blank">chess.js &mdash; JavaScript chess library (PGN parsing)</a></li>
+      <li><a href="https://github.com/nmrugg/stockfish.js" target="_blank">Stockfish.js &mdash; Chess engine in WASM</a></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>Market &amp; Broadcast Intelligence</h3>
+    <ul>
+      <li><a href="https://www.chess.com/blog/CHESScom/chess-com-reaches-100-million-members" target="_blank">Chess.com &mdash; 100 Million Members Announcement</a></li>
+      <li><a href="https://www.theguardian.com/sport/2023/may/30/world-chess-championship-2023-ding-liren-ian-nepomniachtchi-fide" target="_blank">Guardian &mdash; FIDE World Chess Championship 2023 Coverage</a></li>
+      <li><a href="https://www.youtube.com/@chess" target="_blank">Chess.com YouTube Channel (broadcast format reference)</a></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>Internal References</h3>
+    <ul>
+      <li>Shahar Cohen engineering estimate: "Chess as new sport = 6 weeks neto + 2 weeks socket = 8 weeks" (cited in Padel analysis historical section)</li>
+      <li>Padel Sport Analysis (this document's structural template): <code>padel-analysis-public.html</code></li>
+    </ul>
+  </div>
+</section>
+
+</div><!-- /main -->
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <p style="font-size:.9rem;font-weight:600;color:#94a3b8;margin-bottom:.5rem">&#9822; Chess Sport &mdash; Platform Solutions Analysis</p>
+  <p>March 2026 &middot; Manor Birman, Product Manager</p>
+  <p style="margin-top:.75rem">Built with data from Chess.com API, FIDE, internal engineering estimates, and WSC platform architecture context.</p>
+</footer>
+
+<!-- SCROLL TO TOP -->
+<button class="scroll-top" id="scrollTop" aria-label="Scroll to top">&#8593;</button>
+
+<script>
+(function(){
+  // Scroll spy
+  var navItems = document.querySelectorAll('.sidebar .nav-item[href]');
+  var sections = [];
+  navItems.forEach(function(item){
+    var id = item.getAttribute('href').replace('#','');
+    var el = document.getElementById(id);
+    if(el) sections.push({id:id, el:el, nav:item});
+  });
+
+  function updateActive(){
+    var scrollPos = window.scrollY + 100;
+    var current = sections[0];
+    for(var i=0;i<sections.length;i++){
+      if(sections[i].el.offsetTop <= scrollPos) current = sections[i];
+    }
+    navItems.forEach(function(n){n.classList.remove('active')});
+    if(current) current.nav.classList.add('active');
+  }
+
+  var ticking = false;
+  window.addEventListener('scroll', function(){
+    if(!ticking){
+      requestAnimationFrame(function(){
+        updateActive();
+        var btn = document.getElementById('scrollTop');
+        if(window.scrollY > 600) btn.classList.add('visible');
+        else btn.classList.remove('visible');
+        ticking = false;
+      });
+      ticking = true;
+    }
+  });
+
+  document.getElementById('scrollTop').addEventListener('click', function(){
+    window.scrollTo({top:0,behavior:'smooth'});
+  });
+
+  // Mobile menu
+  var sidebar = document.getElementById('sidebar');
+  var menuBtn = document.getElementById('menuBtn');
+  var overlay = document.getElementById('overlay');
+
+  menuBtn.addEventListener('click', function(){
+    sidebar.classList.toggle('open');
+    overlay.classList.toggle('open');
+  });
+  overlay.addEventListener('click', function(){
+    sidebar.classList.remove('open');
+    overlay.classList.remove('open');
+  });
+
+  navItems.forEach(function(item){
+    item.addEventListener('click', function(){
+      if(window.innerWidth <= 900){
+        sidebar.classList.remove('open');
+        overlay.classList.remove('open');
+      }
+    });
+  });
+
+  updateActive();
+})();
+</script>
+</body>
+</html>
