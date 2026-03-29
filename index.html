@@ -233,7 +233,7 @@ code{background:#f1f5f9;padding:2px 6px;border-radius:4px;font-size:.84em;font-f
 <!-- ════════════════ BUSINESS SIGNALS ════════════════ -->
 <section id="context">
   <div class="section-header">
-    <div class="section-tldr tldr-blue">TL;DR &mdash; No signed chess clients. Growing broadcast demand driven by Chess.com, FIDE events, and post-Queen's Gambit cultural surge. Chess.com is the dominant platform and a logical anchor client.</div>
+    <div class="section-tldr tldr-blue">TL;DR &mdash; Two active commercial conversations in 2023: World Chess/FEDA (Zvi Shapira, $70-90k offer, stalled) and Chess.com (Uri Yariv, "massive deal or no deal"). No signed clients. No re-engagement recorded since Dec 2023.</div>
     <h2>&#128202; Business Signals</h2>
     <p>Market opportunity, potential client pipeline, and competitive landscape</p>
   </div>
@@ -251,14 +251,37 @@ code{background:#f1f5f9;padding:2px 6px;border-radius:4px;font-size:.84em;font-f
   </div>
 
   <div class="card context">
-    <h3>Potential Client Pipeline (Indicative)</h3>
-    <p style="font-size:.85rem;color:var(--gray);margin-bottom:.75rem">No confirmed Salesforce data at time of writing. These represent logical client targets based on market activity.</p>
+    <h3>Salesforce &amp; Slack Commercial Signals</h3>
+    <p style="font-size:.85rem;color:var(--gray);margin-bottom:.75rem">Active commercial conversations documented in #chess (Nov–Dec 2023). Two separate opportunities pursued in parallel.</p>
     <table>
-      <tr><th>Potential Client</th><th>Type</th><th>Why WSC</th><th>Status</th></tr>
-      <tr><td><strong>Chess.com</strong></td><td>Platform</td><td>Produces broadcast content, needs automated highlight packages for social/app</td><td><span class="badge badge-gray">Unconfirmed</span></td></tr>
-      <tr><td><strong>FIDE</strong></td><td>Federation</td><td>World Championship and Grand Prix events need broadcast-ready content</td><td><span class="badge badge-gray">Unconfirmed</span></td></tr>
-      <tr><td><strong>Chessable / chess24</strong></td><td>Media/Ed</td><td>Content-heavy audiences seeking tournament recaps</td><td><span class="badge badge-gray">Unconfirmed</span></td></tr>
-      <tr><td><strong>National Federations</strong></td><td>Federation</td><td>US Chess, ECF, ChessFed India — growing social media needs</td><td><span class="badge badge-gray">Unconfirmed</span></td></tr>
+      <tr><th>Client</th><th>Owner</th><th>Signal</th><th>Pricing</th><th>Status</th></tr>
+      <tr>
+        <td><strong>World Chess (FEDA)</strong></td>
+        <td>Zvi Shapira (BizDev)</td>
+        <td>Met in Berlin. Proposal sent. "Prices a bit high but within range."</td>
+        <td>$70k / $80k / $90k (3-year tiered offer)</td>
+        <td><span class="badge badge-orange">Stalled — pushed season to later in year</span></td>
+      </tr>
+      <tr>
+        <td><strong>Chess.com</strong></td>
+        <td>Uri Yariv (VP)</td>
+        <td>Commercial call held Nov 2023. Framed as "either a massive deal or no deal" — scope beyond standard highlights offering.</td>
+        <td>TBD (complex scope)</td>
+        <td><span class="badge badge-orange">Exploratory — no follow-up recorded</span></td>
+      </tr>
+    </table>
+    <div class="highlight">
+      <strong>Salesforce Opportunity:</strong> A Salesforce record exists for the chess opportunity — linked from Jira <a href="https://wsc-sports.atlassian.net/browse/DEV-157380" target="_blank">DEV-157380</a>. Last commercial update: Dec 2023 (World Chess season delay). No subsequent re-engagement documented.
+    </div>
+  </div>
+
+  <div class="card context">
+    <h3>Internal Readiness &amp; Competitive Signals</h3>
+    <table>
+      <tr><th>Signal</th><th>Source</th><th>Implication</th></tr>
+      <tr><td>Yuval Ben Nissan (Sports Parliament) ready to contribute chess/esports action mapping</td><td>#sports-parliament, Mar 2026</td><td>Internal domain knowledge available — reduces research effort</td></tr>
+      <tr><td>Scoreplay exploring Esports</td><td>#competitors, Gal Bartov</td><td>Competitive pressure: window is narrowing for mind sports as a differentiated angle</td></tr>
+      <tr><td>Dan Dragucki (Data): confirmed PGN can be ingested — moves, captures, castling, check, checkmate</td><td>#chess, Nov 2023</td><td>Ingestion feasibility validated at a basic level. Latency and live PBP remain open risks.</td></tr>
     </table>
   </div>
 
@@ -271,7 +294,7 @@ code{background:#f1f5f9;padding:2px 6px;border-radius:4px;font-size:.84em;font-f
       <tr><td><strong>ScorePlay</strong></td><td>Automated social content for sports.</td><td>No confirmed chess presence — window open.</td></tr>
     </table>
     <div class="highlight">
-      <strong>Key insight:</strong> Unlike Padel, Chess has no direct competitor already in market for automated WSC-style content. The window is open, but demand is unproven at the client level.
+      <strong>Key insight:</strong> No competitor has an automated WSC-style chess content product. The window is open — but internal commercial conversations have stalled and demand at scale is unproven.
     </div>
   </div>
 </section>
@@ -318,7 +341,7 @@ code{background:#f1f5f9;padding:2px 6px;border-radius:4px;font-size:.84em;font-f
       <tr><td><strong>FIDE</strong></td><td>Player ratings, tournament schedules, OTB results</td><td>REST (limited)</td><td>JSON / XML</td><td><span class="badge badge-gray">Public partial</span></td></tr>
     </table>
     <div class="highlight">
-      <strong>Key advantage vs Padel:</strong> Chess has a universal open format (PGN — Portable Game Notation). A single parser handles data from any provider. This significantly reduces per-provider integration effort.
+      <strong>Universal format advantage:</strong> Chess uses PGN (Portable Game Notation) as its global standard. A single parser handles data from any provider — Chess.com, DGT, Lichess, or FIDE. This significantly reduces per-provider integration effort.
     </div>
   </div>
 </section>
@@ -373,7 +396,7 @@ code{background:#f1f5f9;padding:2px 6px;border-radius:4px;font-size:.84em;font-f
 
   <div class="card" style="border-left:4px solid var(--purple)">
     <h3>Key Moments — Algorithmically Derivable from Eval</h3>
-    <p style="font-size:.85rem;color:var(--gray)">Unlike Padel (where shot-type data doesn't exist in the feed), chess highlights can be algorithmically detected from computer evaluation alone.</p>
+    <p style="font-size:.85rem;color:var(--gray)">Chess highlights are algorithmically detectable from computer evaluation alone — no manual tagging, no provider-dependent action fields required.</p>
     <table>
       <tr><th>Moment Type</th><th>Detection Method</th><th>Threshold</th></tr>
       <tr><td><strong>Blunder (??)</strong></td><td>Eval swing against player &ge; 2.0 pawns</td><td>&ge; 2.0 centipawn loss</td></tr>
@@ -509,7 +532,7 @@ code{background:#f1f5f9;padding:2px 6px;border-radius:4px;font-size:.84em;font-f
   </div>
 
   <div class="highlight">
-    <strong>Key observation:</strong> Unlike most sports, ~70% of chess highlight moments are <em>algorithmically detectable</em> from the PGN + eval data alone. This is fundamentally different from football, basketball, or even padel — where highlight detection requires action tags that the feed may not provide. Chess is automation-friendly from day one.
+    <strong>Key observation:</strong> Unlike most sports, ~70% of chess highlight moments are <em>algorithmically detectable</em> from the PGN + eval data alone. This is fundamentally different from most sports — where highlight detection requires action tags that the provider feed may or may not supply. Chess is automation-friendly from day one.
   </div>
 </section>
 
@@ -565,7 +588,7 @@ code{background:#f1f5f9;padding:2px 6px;border-radius:4px;font-size:.84em;font-f
 
   <div class="card" style="border-left:4px solid var(--red)">
     <h3>Why No Existing Sub-Sport Parent Works</h3>
-    <p style="margin-bottom:1rem">Unlike Padel (which shares Tennis scoring), Chess has <em>no scoring, no physical actions, and no video event model</em> in common with any WSC sport.</p>
+    <p style="margin-bottom:1rem">Chess has <em>no scoring, no physical actions, and no video event model</em> in common with any existing WSC sport. It is structurally unlike every sport currently on the platform.</p>
     <table>
       <tr><th>Candidate Parent</th><th>Shared With Chess</th><th>Would Need to Override</th><th>Verdict</th></tr>
       <tr><td>Tennis (1v1)</td><td>1v1 format</td><td>Scoring, video events, game progress, all actions, content type</td><td style="color:var(--red)">&#10060; Override everything</td></tr>
@@ -606,10 +629,11 @@ code{background:#f1f5f9;padding:2px 6px;border-radius:4px;font-size:.84em;font-f
   <div class="card" style="border-left:4px solid var(--green)">
     <h3>Phase 0 &mdash; Validate Demand (Now, 0 sprints)</h3>
     <ul>
-      <li>Identify whether Chess.com, FIDE, or any client has expressed interest</li>
-      <li>Check Salesforce for any chess-related opportunities</li>
-      <li>Get sample PGN + stream data from Chess.com API (publicly available)</li>
-      <li>Assess whether board animation output fits WSC's delivery stack</li>
+      <li><strong>&#9989; Done:</strong> Salesforce checked — World Chess/FEDA opportunity exists (Zvi Shapira, $70-90k offer sent, stalled Dec 2023)</li>
+      <li><strong>&#9989; Done:</strong> Chess.com commercial call held (Uri Yariv, Nov 2023) — complex scope, no follow-through</li>
+      <li><strong>&#9989; Done:</strong> Sample PGN inspected by Dan Dragucki (Nov 2023) — basic ingestion feasibility confirmed</li>
+      <li><strong>&#9888; Open:</strong> Re-engage Chess.com or World Chess — is the opportunity still alive in 2026?</li>
+      <li><strong>&#9888; Open:</strong> Assess whether board animation output fits WSC's delivery stack</li>
     </ul>
   </div>
 
@@ -787,7 +811,7 @@ code{background:#f1f5f9;padding:2px 6px;border-radius:4px;font-size:.84em;font-f
       <tr><td><strong>Total</strong></td><td><strong>1–2 devs</strong></td><td><strong>2–4 sprints (~1–2 months)</strong></td></tr>
     </table>
     <div class="highlight">
-      <strong>Why this works for Chess specifically:</strong> Unlike Padel (where manual clipping meant a human watching video), Chess manual operation means running a PGN through a script. The "manual" is the analyst choosing which games to process — the annotation is automated from the PGN eval data. Operational cost per game is <em>minutes, not hours</em>.
+      <strong>Why this works for Chess specifically:</strong> Chess "manual" operation means running a PGN through a script — not watching video footage. The analyst selects which games to process; the annotation is fully automated from the eval data. Operational cost per game is <em>minutes, not hours</em>.
     </div>
   </div>
 </section>
@@ -854,7 +878,7 @@ code{background:#f1f5f9;padding:2px 6px;border-radius:4px;font-size:.84em;font-f
       <tr><td>Data format</td><td>PGN is universal — one parser serves all providers. No Foxtenn vs Crionet ambiguity.</td></tr>
       <tr><td>Highlight detection</td><td>Algorithmic from eval. No custom ML model needed to detect key moments.</td></tr>
       <tr><td>Action definition</td><td>Actions derived from mathematical rules, not sport analyst judgment calls.</td></tr>
-      <tr><td>Data completeness</td><td>PGN is complete — every move, clock, eval. No "missing field" issue like Padel shot types.</td></tr>
+      <tr><td>Data completeness</td><td>PGN is complete by definition — every move, clock time, and eval value is guaranteed in the spec. No provider-dependent gaps.</td></tr>
     </table>
   </div>
 
@@ -960,11 +984,11 @@ code{background:#f1f5f9;padding:2px 6px;border-radius:4px;font-size:.84em;font-f
   <div class="card">
     <h3>Immediate Next Steps</h3>
     <ol>
-      <li>&#128202; <strong>Check Salesforce</strong> — any chess-related opportunities or conversations?</li>
-      <li>&#128172; <strong>Chess.com outreach</strong> — informal BD conversation. Do they have a content automation gap?</li>
-      <li>&#128300; <strong>Chess.com API exploration</strong> — pull a sample PGN with eval from their public API. Assess timestamp quality.</li>
-      <li>&#127915; <strong>Open Jira epic</strong> — Chess exploration epic if demand signal exists.</li>
-      <li>&#128293; <strong>Quick spike</strong> — 1 dev, 1 week: PGN → eval → board animation POC. Shareable demo.</li>
+      <li>&#128172; <strong>Re-engage World Chess (FEDA)</strong> — Zvi Shapira had an offer out ($70-90k, "within range") that stalled when they pushed their season. Check if timing has changed in 2026.</li>
+      <li>&#128172; <strong>Chess.com follow-up</strong> — Uri Yariv framed it as "massive deal or no deal" in Nov 2023. Worth a status check: is the appetite still there, and what would "massive" look like?</li>
+      <li>&#128300; <strong>Chess.com API exploration</strong> — pull a sample PGN with eval from their public API. Assess timestamp quality for live use.</li>
+      <li>&#127915; <strong>Open Jira epic</strong> — Chess exploration epic if demand signal resurfaces.</li>
+      <li>&#128293; <strong>Quick spike</strong> — 1 dev, 1 week: PGN → eval → board animation POC. Shareable demo to reignite client interest.</li>
     </ol>
   </div>
 </section>
@@ -1014,8 +1038,7 @@ code{background:#f1f5f9;padding:2px 6px;border-radius:4px;font-size:.84em;font-f
   <div class="card">
     <h3>Internal References</h3>
     <ul>
-      <li>Shahar Cohen engineering estimate: "Chess as new sport = 6 weeks neto + 2 weeks socket = 8 weeks" (cited in Padel analysis historical section)</li>
-      <li>Padel Sport Analysis (this document's structural template): <code>padel-analysis-public.html</code></li>
+      <li>Shahar Cohen engineering estimate: "Chess as new sport = 6 weeks neto + 2 weeks socket = 8 weeks" (from #chess Slack channel, Nov 2023)</li>
     </ul>
   </div>
 </section>
